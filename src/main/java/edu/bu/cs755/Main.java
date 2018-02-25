@@ -77,8 +77,8 @@ public class Main {
 		    			.map(reportToTimeAndErrorTuple)
 		    			.collect(Collectors.toList());
 		    
-		    timeAndErrorTuples.stream().forEach(tet -> System.out.println(tet.toString()));
-		    
+		    timeAndErrorTuples.stream().collect(Collectors.toMap(t -> TimeAndErrorTuple::getHour, 1));
+		    //timeAndErrorTuples.stream().collect(groupingBy(TimeAndErrorTuple::getHour));
 		    
 		    
 		    reader.close();
