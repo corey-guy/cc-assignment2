@@ -67,7 +67,9 @@ public class Main {
 		    List<TaxiReport> taxiReports =reader.lines().map(mapToItem).collect(Collectors.toList());
 		    System.out.println("First Row: "+ taxiReports.get(0).toString());
 		    System.out.println("Should be 9th Hour " + taxiReports.get(256692).getPickupDateTime().getHourOfDay());
-		    		
+		    System.out.println("GPS error of second row: " + taxiReports.get(0).getGPSError());
+		    System.out.println("GPS error of second row: " + taxiReports.get(1).getGPSError());
+		    System.out.println("GPS error of second row: " + taxiReports.get(2).getGPSError());
 		    reader.close();
 			//s3is.close();
 						

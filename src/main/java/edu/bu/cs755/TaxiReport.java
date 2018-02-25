@@ -3,7 +3,7 @@ package edu.bu.cs755;
 import org.joda.time.DateTime;
 
 public class TaxiReport {
-	
+	private String ZERO_CORD = "0.000000";
 	private String medallion;
 	private String hackLicense;
 	private DateTime pickupDateTime;
@@ -20,7 +20,11 @@ public class TaxiReport {
 	private String tipAmount;
 	private String tollsAmount;
 	private String totalAmount;
-	
+	private Boolean GPSError = false;
+	public Boolean getGPSError() {
+		return GPSError;
+	}
+
 	public TaxiReport() {
 		
 	}
@@ -88,6 +92,10 @@ public class TaxiReport {
 	}
 
 	public void setPickupLongitude(String pickupLongitude) {
+		if(pickupLongitude.equals(ZERO_CORD))
+		{
+			this.GPSError = true;
+		}
 		this.pickupLongitude = pickupLongitude;
 	}
 
@@ -96,6 +104,10 @@ public class TaxiReport {
 	}
 
 	public void setPickupLatitude(String pickupLatitude) {
+		if(pickupLatitude.equals(ZERO_CORD))
+		{
+			this.GPSError = true;
+		}
 		this.pickupLatitude = pickupLatitude;
 	}
 
@@ -104,6 +116,10 @@ public class TaxiReport {
 	}
 
 	public void setDropoffLongitude(String dropoffLongitude) {
+		if(dropoffLongitude.equals(ZERO_CORD))
+		{
+			this.GPSError = true;
+		}
 		this.dropoffLongitude = dropoffLongitude;
 	}
 
@@ -112,6 +128,10 @@ public class TaxiReport {
 	}
 
 	public void setDropoffLatitude(String dropoffLatitude) {
+		if(dropoffLatitude.equals(ZERO_CORD))
+		{
+			this.GPSError = true;
+		}
 		this.dropoffLatitude = dropoffLatitude;
 	}
 
