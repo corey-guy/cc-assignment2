@@ -64,22 +64,32 @@ public class Main {
 
 		    //BufferedReader reader = new BufferedReader(new InputStreamReader(s3object.getObjectContent()));
 		    BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(key_name)));
-		    List<TaxiReport> taxiReports =reader.lines().map(mapToItem).collect(Collectors.toList());
-		    System.out.println("First Row: "+ taxiReports.get(0).toString());
-		    //System.out.println("Should be 9th Hour " + taxiReports.get(256692).getPickupDateTime().getHourOfDay());
-		    //System.out.println("GPS error of second row: " + taxiReports.get(0).getGPSError());
-		    //System.out.println("GPS error of second row: " + taxiReports.get(1).getGPSError());
-		    //System.out.println("GPS error of second row: " + taxiReports.get(2).getGPSError());
 		    
+		    //Data Validation
+		    List<TaxiReport> taxiReports =reader.lines().map(mapToItem).collect(Collectors.toList());
+		    
+		    //Data Map
 		    List<TimeAndErrorTuple> timeAndErrorTuples = 
 		    		taxiReports.stream()
 		    			.filter( tr -> tr.getGPSError() == true)
 		    			.map(reportToTimeAndErrorTuple)
 		    			.collect(Collectors.toList());
 		    
-		    timeAndErrorTuples.stream().collect(Collectors.toMap(t -> TimeAndErrorTuple::getHour, 1));
-		    //timeAndErrorTuples.stream().collect(groupingBy(TimeAndErrorTuple::getHour));
+		    //Data Shuffle
+		    Map<Integer, List<TimeAndErrorTuple>> shuffle = timeAndErrorTuples.stream()
+		    		.collect(Collectors.groupingBy(TimeAndErrorTuple::getHour));
 		    
+		    //Data Reduce without streams
+		    //for(int i = 0; i < 24; i++) {	
+		    	//	System.out.println("Hour " + i + " :" + shuffle.get(new Integer(i)).size());
+		    //}
+		    
+		    //Data Reduce the Correct Way
+		    Map<Integer, Integer> taskOneResult = shuffle.entrySet().stream()
+		    		.collect(Collectors.toMap(Map.Entry::getKey, v -> v.getValue().size()));
+		    
+		    taskOneResult.entrySet().stream().forEach(s -> System.out.println("Real Hour " + s.getKey() + ": " + s.getValue()));
+
 		    
 		    reader.close();
 			//s3is.close();
@@ -96,6 +106,13 @@ public class Main {
 		}
 
 	}
+	public static Function<TimeAndErrorTuple, Integer> TupleToOne = (line) -> {
+		  return new Integer(1);
+	};
+	
+	public static Function<TimeAndErrorTuple, Integer> TupleToMapKey = (line) -> {
+		  return line.getHourAsInteger();
+	};
 	
 	public static Function<String, TaxiReport> mapToItem = (line) -> {
 		  TaxiReport taxiReport = new TaxiReport();
@@ -126,7 +143,7 @@ public class Main {
 	};
 	
 	public static Function<TaxiReport, TimeAndErrorTuple> reportToTimeAndErrorTuple = (line) -> {
-		  TimeAndErrorTuple timeAndErrorTuple = new TimeAndErrorTuple(line.getPickupDateTime().getHourOfDay(), 1);
+		  TimeAndErrorTuple timeAndErrorTuple = new TimeAndErrorTuple(line.getPickupDateTime().getHourOfDay(), line.getGPSError() ? 1 : 0);
 		  return timeAndErrorTuple;
 	};
 }

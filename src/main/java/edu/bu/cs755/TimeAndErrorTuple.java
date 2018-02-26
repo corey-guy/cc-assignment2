@@ -3,6 +3,7 @@ package edu.bu.cs755;
 public class TimeAndErrorTuple {
 	private int hour;
 	private int isError = 0;
+	private Integer hourAsInteger;
 
 	public TimeAndErrorTuple(int i, int isError)
 	{
@@ -16,6 +17,11 @@ public class TimeAndErrorTuple {
 
 	public void setHour(int hour) {
 		this.hour = hour;
+		this.hourAsInteger = new Integer(hour);
+	}
+	
+	public Integer getHourAsInteger() {
+		return hourAsInteger;
 	}
 	
 	public int getIsError() {
